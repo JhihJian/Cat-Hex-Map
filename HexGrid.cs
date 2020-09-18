@@ -464,4 +464,8 @@ public class HexGrid : MonoBehaviour {
 		}
 		return visibleCells;
 	}
+	public void plantPrefeb(HexCell cell, Vector3 position, GameObject prefab)
+    {
+		chunkPrefab.features.AddFeatureOnly(cell, position, prefab);
+	}
 }

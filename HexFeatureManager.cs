@@ -26,6 +26,19 @@ public class HexFeatureManager : MonoBehaviour {
 		walls.Apply();
 	}
 
+	public void AddFeatureOnly(HexCell cell, Vector3 position, GameObject prefab)
+	{
+		if (cell.IsSpecial)
+		{
+			return;
+		}
+		Transform instance = GameObject.Instantiate(prefab).transform;
+		position.y += instance.localScale.y * 0.5f;
+		instance.localPosition = HexMetrics.Perturb(position);
+		instance.localRotation = Quaternion.Euler(0f, 360f * Random.Range(0,1), 0f);
+		instance.SetParent(container, false);
+	}
+
 	Transform PickPrefab (
 		HexFeatureCollection[] collection,
 		int level, float hash, float choice
