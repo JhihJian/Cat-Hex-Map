@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ItemSelect : MonoBehaviour, IPointerClickHandler
 {
@@ -9,6 +10,7 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler
     ItemGridGenerator itemGridGenerator;
     private GameObject followObject;
     private PlantItem nowPlantItem;
+    private RawImage nowHightRawImage;
     private void Awake()
     {
         itemGridGenerator = GetComponent<ItemGridGenerator>();
@@ -55,9 +57,7 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler
     {
         if (followObject != null)
         {
-            Destroy(followObject);
-            nowPlantItem = null;
-            followObject = null;
+            destroyFollowAndHightLight();
         }
     }
     PlantItem GetItem()
@@ -77,14 +77,11 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler
     //只能检测ui的点击
     public void OnPointerClick(PointerEventData eventData)
     {
-        GameObject gameObject=eventData.pointerCurrentRaycast.gameObject.transform.parent.gameObject;
+        GameObject rawImage = eventData.pointerCurrentRaycast.gameObject;
+        GameObject gameObject= rawImage.transform.parent.gameObject;
+        
         PlantItem plantItem=itemGridGenerator.locatePlantItem(gameObject);
-        Debug.Log(plantItem);
-        if (plantItem != null)
-        {
-            nowPlantItem = plantItem;
-            initFollowObject(plantItem.prefebs[0]);
-        }
+        setFollowAndHightLight(plantItem,rawImage);
     }
     public void plantItemInGrid(PlantItem plantItem)
     {
@@ -93,15 +90,32 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler
         hexGrid.plantPrefeb(targetCell, getInGridWorldPosition(),plantItem.prefebs[0]);
     }
 
-    private void initFollowObject(GameObject gameObject)
+    private void setFollowAndHightLight(PlantItem plantItem, GameObject rawImageObject)
     {
+        if (plantItem != null)
+        {
+            destroyFollowAndHightLight();
+            nowPlantItem = plantItem;
+            followObject = GameObject.Instantiate(plantItem.prefebs[0]);
+            followObject.transform.position = getInGridWorldPosition();
+            //设置hight light
+            RawImage rawImage= rawImageObject.GetComponent<RawImage>();
+            rawImage.color = Color.red;
+            nowHightRawImage = rawImage;
+        }
+    }
+    private void destroyFollowAndHightLight()
+    {
+        if (nowHightRawImage != null)
+        {
+            nowHightRawImage.color = Color.white;
+            nowHightRawImage = null;
+        }
         if (followObject != null)
         {
             Destroy(followObject);
             nowPlantItem = null;
             followObject = null;
         }
-        followObject = GameObject.Instantiate(gameObject);
-        followObject.transform.position= getInGridWorldPosition();
     }
 }

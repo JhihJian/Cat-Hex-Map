@@ -466,6 +466,6 @@ public class HexGrid : MonoBehaviour {
 	}
 	public void plantPrefeb(HexCell cell, Vector3 position, GameObject prefab)
     {
-		chunkPrefab.features.AddFeatureOnly(cell, position, prefab);
+		cell.chunk.features.AddFeatureOnly(cell, position, prefab);
 	}
 }

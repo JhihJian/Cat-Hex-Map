@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class HexFeatureManager : MonoBehaviour {
 
@@ -13,7 +14,21 @@ public class HexFeatureManager : MonoBehaviour {
 
 	Transform container;
 
-	public void Clear () {
+	struct FeatureStruct{
+		public HexCell cell; public Vector3 position; public GameObject prefab;
+
+        public FeatureStruct(HexCell cell, Vector3 position, GameObject prefab)
+        {
+            this.cell = cell;
+            this.position = position;
+            this.prefab = prefab;
+        }
+    }
+
+	List<FeatureStruct> plantedFeatures = new List<FeatureStruct>();
+
+    public void Clear () {
+		Debug.Log("HexFeatureManager Clear");
 		if (container) {
 			Destroy(container.gameObject);
 		}
@@ -24,6 +39,10 @@ public class HexFeatureManager : MonoBehaviour {
 
 	public void Apply () {
 		walls.Apply();
+		for (int i = 0; i < plantedFeatures.Count;i++)
+        {
+			AddFeatureOnly(plantedFeatures[i].cell, plantedFeatures[i].position, plantedFeatures[i].prefab);
+		}
 	}
 
 	public void AddFeatureOnly(HexCell cell, Vector3 position, GameObject prefab)
@@ -36,7 +55,12 @@ public class HexFeatureManager : MonoBehaviour {
 		position.y += instance.localScale.y * 0.5f;
 		instance.localPosition = HexMetrics.Perturb(position);
 		instance.localRotation = Quaternion.Euler(0f, 360f * Random.Range(0,1), 0f);
+		Debug.Log("container:" + container);
+		Debug.Log("prefab:" + prefab);
+		Debug.Log("cell:" + cell);
+		Debug.Log("instance:" + instance);
 		instance.SetParent(container, false);
+		plantedFeatures.Add(new FeatureStruct(cell, position, prefab));
 	}
 
 	Transform PickPrefab (
