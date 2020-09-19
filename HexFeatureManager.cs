@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Pinwheel.Griffin;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class HexFeatureManager : MonoBehaviour {
@@ -14,7 +15,7 @@ public class HexFeatureManager : MonoBehaviour {
 
 	Transform container;
 
-	struct FeatureStruct{
+	public struct FeatureStruct{
 		public HexCell cell; public Vector3 position; public GameObject prefab;
 
         public FeatureStruct(HexCell cell, Vector3 position, GameObject prefab)
@@ -23,9 +24,10 @@ public class HexFeatureManager : MonoBehaviour {
             this.position = position;
             this.prefab = prefab;
         }
+
     }
 
-	List<FeatureStruct> plantedFeatures = new List<FeatureStruct>();
+	public List<FeatureStruct> plantedFeatures = new List<FeatureStruct>();
 
     public void Clear () {
 		Debug.Log("HexFeatureManager Clear");
@@ -34,15 +36,16 @@ public class HexFeatureManager : MonoBehaviour {
 		}
 		container = new GameObject("Features Container").transform;
 		container.SetParent(transform, false);
+		for (int i = 0; i < plantedFeatures.Count; i++)
+		{
+			AddFeatureOnly(plantedFeatures[i].cell, plantedFeatures[i].position, plantedFeatures[i].prefab);
+		}
 		walls.Clear();
 	}
 
 	public void Apply () {
 		walls.Apply();
-		for (int i = 0; i < plantedFeatures.Count;i++)
-        {
-			AddFeatureOnly(plantedFeatures[i].cell, plantedFeatures[i].position, plantedFeatures[i].prefab);
-		}
+		
 	}
 
 	public void AddFeatureOnly(HexCell cell, Vector3 position, GameObject prefab)
@@ -60,7 +63,6 @@ public class HexFeatureManager : MonoBehaviour {
 		Debug.Log("cell:" + cell);
 		Debug.Log("instance:" + instance);
 		instance.SetParent(container, false);
-		plantedFeatures.Add(new FeatureStruct(cell, position, prefab));
 	}
 
 	Transform PickPrefab (

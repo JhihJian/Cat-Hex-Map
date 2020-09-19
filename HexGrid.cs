@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using static HexFeatureManager;
 
 public class HexGrid : MonoBehaviour {
 
@@ -466,6 +467,8 @@ public class HexGrid : MonoBehaviour {
 	}
 	public void plantPrefeb(HexCell cell, Vector3 position, GameObject prefab)
     {
+		cell.chunk.features.plantedFeatures.Add(new FeatureStruct(cell, position, prefab));
+
 		cell.chunk.features.AddFeatureOnly(cell, position, prefab);
 	}
 }
